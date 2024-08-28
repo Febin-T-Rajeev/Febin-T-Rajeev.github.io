@@ -78,19 +78,19 @@
             margin-bottom: 5px;
         }
 
-        #polaroid1 {
+        #polaroid11 {
             top: 50px;
             left: 50px;
             transform: rotate(-10deg);
         }
 
-        #polaroid2 {
+        #polaroid22 {
             top: 300px;
             right: 50px;
             transform: rotate(5deg);
         }
 
-        #polaroid3 {
+        #polaroid33 {
             bottom: 50px;
             left: 380px;
             transform: rotate(-5deg);
@@ -112,19 +112,19 @@
                 font-size: 0.5rem; /* Adjust font size for mobile view */
             }
 
-            #polaroid1 {
+            #polaroid11 {
                 top: 110px;
                 left: 50px;
                 transform: rotate(-10deg);
             }
 
-            #polaroid2 {
+            #polaroid22 {
                 top: 300px;
                 right: 50px;
                 transform: rotate(5deg);
             }
 
-            #polaroid3 {
+            #polaroid33 {
                 bottom: 100px;
                 left: 250px;
                 transform: rotate(-5deg);
@@ -236,6 +236,18 @@
                 &emsp;Here is a <span class="curly-strike">crossed-out</span> word example. You can <del>remove</del> or <del>modify</del> text as needed.
             </p>
         </div>
+        <div class="polaroid" id="polaroid11">
+            <img src="src\91345809.jpg" alt="Photo 1">
+            <p>Caption 1</p>
+        </div>
+        <div class="polaroid" id="polaroid22">
+            <img src="https://unsplash.it/200/200?image=1" alt="Photo 2">
+            <p>Caption 2</p>
+        </div>
+        <div class="polaroid" id="polaroid33">
+            <img src="https://unsplash.it/200/200?image=2" alt="Photo 3">
+            <p>Caption 3</p>
+        </div>
         <div class="polaroid" id="polaroid1">
             <img src="https://unsplash.it/200/200?image=0" alt="Photo 1">
             <p>Caption 1</p>
@@ -248,14 +260,87 @@
             <img src="https://unsplash.it/200/200?image=2" alt="Photo 3">
             <p>Caption 3</p>
         </div>
+        <!-- New Polaroids -->
+        <div class="polaroid" id="polaroid4">
+            <img src="https://unsplash.it/200/200?image=3" alt="Photo 4">
+            <p>Caption 4</p>
+        </div>
+        <div class="polaroid" id="polaroid5">
+            <img src="https://unsplash.it/200/200?image=4" alt="Photo 5">
+            <p>Caption 5</p>
+        </div>
+        <div class="polaroid" id="polaroid6">
+            <img src="https://unsplash.it/200/200?image=5" alt="Photo 6">
+            <p>Caption 6</p>
+        </div>
+        <div class="polaroid" id="polaroid7">
+            <img src="https://unsplash.it/200/200?image=6" alt="Photo 7">
+            <p>Caption 7</p>
+        </div>
+        <div class="polaroid" id="polaroid8">
+            <img src="https://unsplash.it/200/200?image=7" alt="Photo 8">
+            <p>Caption 8</p>
+        </div>
+        <div class="polaroid" id="polaroid9">
+            <img src="https://unsplash.it/200/200?image=8" alt="Photo 9">
+            <p>Caption 9</p>
+        </div>
+        <div class="polaroid" id="polaroid10">
+            <img src="https://unsplash.it/200/200?image=9" alt="Photo 10">
+            <p>Caption 10</p>
+        </div>
         <div class="pageflip" id="pageflip"></div>
     </div>
 
     <script>
+      document.addEventListener('DOMContentLoaded', function() {
+    const polaroidIds = [
+        'polaroid1', 'polaroid2', 'polaroid3', 'polaroid4', 'polaroid5',
+        'polaroid6', 'polaroid7', 'polaroid8', 'polaroid9', 'polaroid10'
+    ];
+    
+    let zIndexCounter = 10; // Counter to track the z-index for stacking
+
+    polaroidIds.forEach((id) => {
+        const polaroid = document.getElementById(id);
+        if (polaroid) {
+            polaroid.style.position = 'absolute';
+            polaroid.style.zIndex = zIndexCounter; // Set initial z-index
+        }
+    });
+    // Function to generate a random rotation value
+    function getRandomRotation() {
+        return Math.floor(Math.random() * 20) - 10; // Random rotation between -10deg and 10deg
+    }
+
+    // Function to generate a random vertical offset
+    function getRandomOffset() {
+        return Math.floor(Math.random() * 40) + 20; // Random offset between 20px and 60px
+    }
+
+    polaroidIds.forEach((id, index) => {
+        const polaroid = document.getElementById(id);
+        if (polaroid) {
+            const rotation = getRandomRotation();
+            const offset = getRandomOffset();
+
+            polaroid.style.position = 'absolute';
+            polaroid.style.bottom = `${offset}px`; // Random vertical position
+            polaroid.style.left = '30px'; // Fixed horizontal position
+            polaroid.style.transform = `rotate(${rotation}deg)`; // Random rotation
+
+            // Ensure Polaroids stack on top of each other
+            polaroid.style.zIndex = 10 + index; // Increment z-index to stack Polaroids
+        }
+    });
+});
+
+
 
 interact('.polaroid')
             .draggable({
                 listeners: {
+                    
                     move(event) {
                         var target = event.target;
                         var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
