@@ -293,110 +293,142 @@
     </div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-    const polaroidIds = [
-        'polaroid1', 'polaroid2', 'polaroid3', 'polaroid4', 'polaroid5',
-        'polaroid6', 'polaroid7', 'polaroid8', 'polaroid9', 'polaroid10'
-    ];
-    
-    let zIndexCounter = 10; // Counter to track the z-index for stacking
-
-    polaroidIds.forEach((id) => {
-        const polaroid = document.getElementById(id);
-        if (polaroid) {
-            polaroid.style.position = 'absolute';
-            polaroid.style.zIndex = zIndexCounter; // Set initial z-index
-        }
-    });
-    // Function to generate a random rotation value
-    function getRandomRotation() {
-        return Math.floor(Math.random() * 20) - 10; // Random rotation between -10deg and 10deg
-    }
-
-    // Function to generate a random vertical offset
-    function getRandomOffset() {
-        return Math.floor(Math.random() * 40) + 20; // Random offset between 20px and 60px
-    }
-
-    polaroidIds.forEach((id, index) => {
-        const polaroid = document.getElementById(id);
-        if (polaroid) {
-            const rotation = getRandomRotation();
-            const offset = getRandomOffset();
-
-            polaroid.style.position = 'absolute';
-            polaroid.style.bottom = `${offset}px`; // Random vertical position
-            polaroid.style.left = '30px'; // Fixed horizontal position
-            polaroid.style.transform = `rotate(${rotation}deg)`; // Random rotation
-
-            // Ensure Polaroids stack on top of each other
-            polaroid.style.zIndex = 10 + index; // Increment z-index to stack Polaroids
-        }
-    });
-});
-
-
-
-interact('.polaroid')
-            .draggable({
-                listeners: {
+        document.addEventListener('DOMContentLoaded', function() {
+            const polaroidIds = [
+                'polaroid1', 'polaroid2', 'polaroid3', 'polaroid4', 'polaroid5',
+                'polaroid6', 'polaroid7', 'polaroid8', 'polaroid9', 'polaroid10'
+            ];
+        
+            let zIndexCounter = 10; // Counter to track the z-index for stacking
+        
+            // Initialize z-index and store initial rotation for all Polaroids
+            polaroidIds.forEach((id, index) => {
+                const polaroid = document.getElementById(id);
+                if (polaroid) {
+                    polaroid.style.position = 'absolute';
+                    polaroid.style.zIndex = zIndexCounter + index; // Set initial z-index
                     
-                    move(event) {
-                        var target = event.target;
-                        var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-                        var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-                        target.style.transform = `translate(${x}px, ${y}px)`;
-
-                        target.setAttribute('data-x', x);
-                        target.setAttribute('data-y', y);
-                    }
+                    // Store initial rotation
+                    const style = window.getComputedStyle(polaroid);
+                    const transform = style.transform || 'none';
+                    const rotateMatch = transform.match(/rotate\((-?\d+\.?\d*)deg\)/);
+                    const initialRotation = rotateMatch ? parseFloat(rotateMatch[1]) : 0;
+                    polaroid.setAttribute('data-rotation', initialRotation);
                 }
             });
-
-        document.addEventListener('DOMContentLoaded', function() {
+        
+            function getRandomRotation() {
+                return Math.floor(Math.random() * 20) - 10; // Random rotation between -10deg and 10deg
+            }
+        
+            function getRandomOffset() {
+                return Math.floor(Math.random() * 40) + 20; // Random offset between 20px and 60px
+            }
+        
+            polaroidIds.forEach((id, index) => {
+                const polaroid = document.getElementById(id);
+                if (polaroid) {
+                    const rotation = getRandomRotation();
+                    const offset = getRandomOffset();
+        
+                    polaroid.style.position = 'absolute';
+                    polaroid.style.bottom = `${offset}px`; // Random vertical position
+                    polaroid.style.left = '30px'; // Fixed horizontal position
+                    polaroid.style.transform = `rotate(${rotation}deg)`; // Random rotation
+        
+                    // Ensure Polaroids stack on top of each other
+                    polaroid.style.zIndex = 10 + index; // Increment z-index to stack Polaroids
+                }
+            });
+        
+            interact('.polaroid')
+                .draggable({
+                    inertia: true, // Add inertia for smooth dragging
+                    modifiers: [
+                        interact.modifiers.restrict({
+                            restriction: 'parent',
+                            endOnly: true,
+                        }),
+                    ],
+                    listeners: {
+                        start(event) {
+                            // Set the z-index of the dragged Polaroid to the highest value
+                            const draggedPolaroid = event.target;
+                            draggedPolaroid.style.zIndex = Math.max(...polaroidIds.map(id => {
+                                const polaroid = document.getElementById(id);
+                                return polaroid ? parseInt(window.getComputedStyle(polaroid).zIndex) : 0;
+                            })) + 1;
+                        },
+                        move(event) {
+                            const target = event.target;
+                            const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                            const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                            const rotation = parseFloat(target.getAttribute('data-rotation')) || 0;
+        
+                            target.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
+        
+                            target.setAttribute('data-x', x);
+                            target.setAttribute('data-y', y);
+                        },
+                        end(event) {
+                            const target = event.target;
+                            const rect = target.getBoundingClientRect();
+                            const contentWrapperRect = document.getElementById('content-wrapper').getBoundingClientRect();
+                            
+                            // Check if the Polaroid is dropped in the bottom-left corner
+                            const isInBottomLeftCorner = (
+                                rect.right > contentWrapperRect.left &&
+                                rect.bottom > contentWrapperRect.top &&
+                                rect.left < contentWrapperRect.left + 100 &&
+                                rect.top < contentWrapperRect.top + 100
+                            );
+                            
+                            if (isInBottomLeftCorner) {
+                                // Apply random rotation
+                                const randomRotation = getRandomRotation();
+                                target.style.transform += ` rotate(${randomRotation}deg)`;
+                                target.setAttribute('data-rotation', parseFloat(target.style.transform.match(/rotate\((-?\d+\.?\d*)deg\)/)[1]));
+                            }
+                        }
+                    }
+                });
+        
             const pageflip = document.getElementById('pageflip');
             const contentWrapper = document.getElementById('content-wrapper');
-
-            // Function to hide pageflip with closing animation
+        
             function hidePageflip() {
-                // Add the closing animation class
                 pageflip.classList.add('pageflipclose-animate');
                 
-                // Remove the animation class after animation ends to reset for future clicks
                 pageflip.addEventListener('animationend', function() {
                     pageflip.classList.remove('pageflipclose-animate', 'show');
                 }, { once: true });
             }
-
+        
             contentWrapper.addEventListener('click', function(event) {
-                // Check if click is within the bottom-right corner of the content-wrapper
                 const rect = contentWrapper.getBoundingClientRect();
                 const isClickInBottomRight = (
                     event.clientX >= rect.right - 80 &&
                     event.clientY >= rect.bottom - 80
                 );
-
+        
                 if (isClickInBottomRight) {
-                    // Show pageflip with animation
                     pageflip.classList.add('show', 'pageflip-animate');
-
-                    // Remove the animation class after animation ends to reset for future clicks
+        
                     pageflip.addEventListener('animationend', function() {
                         pageflip.classList.remove('pageflip-animate');
                     }, { once: true });
                 } else {
-                    hidePageflip(); // Hide pageflip if clicked outside the bottom-right corner
+                    hidePageflip();
                 }
             });
-
-            // Hide pageflip when clicking anywhere outside the content-wrapper
+        
             document.addEventListener('click', function(event) {
                 if (!contentWrapper.contains(event.target) && !pageflip.contains(event.target)) {
                     hidePageflip();
                 }
             });
         });
-    </script>
+        </script>
+        
 </body>
 </html>
