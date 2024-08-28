@@ -3,31 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Portfolio</title>
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Font Link -->
     <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css">
+    <style>
+        body {
+            font-family: 'Indie Flower', cursive;
+            background-color: grey;
+            background-image: url(https://unsplash.it/g/1920/?blur);
+            background-size: cover;
+            margin: 0;
+            padding: 80px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #content-wrapper {
+            width: 800px;
+            height: 1000px;
+            margin: 0;
+            padding: 2rem;
+            background-color: khaki;
+            background-image: url('./src/grunge-wall-texture.jpg');
+            background-size: cover;
+            background-blend-mode: multiply;
+            border-radius: .2rem;
+            box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-align: center;
+            color: white;
+        }
+
+        #content {
+            font-family: 'Indie Flower', cursive;
+            margin: 0 auto;
+            width: 90%;
+            color: #575757;
+            clear: both;
+            padding-top: 20px;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .polaroid {
+            width: 150px;
+            padding: 10px;
+            background: white;
+            box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.3);
+            position: absolute;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #333;
+            z-index: 10;
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 5px;
+        }
+
+        #polaroid1 {
+            top: 50px;
+            left: 50px;
+            transform: rotate(-10deg);
+        }
+
+        #polaroid2 {
+            top: 300px;
+            right: 50px;
+            transform: rotate(5deg);
+        }
+
+        #polaroid3 {
+            bottom: 50px;
+            left: 380px;
+            transform: rotate(-5deg);
+        }
+
+        /* Mobile view adjustments */
+        @media (max-width: 768px) {
+            #content-wrapper {
+                width: 100vw; /* Set width to 100% of the viewport width */
+                height: 100vh; /* Set height to 100% of the viewport height */
+                transform: scale(1); /* Scale down the entire wrapper */
+                transform-origin: top left; /* Keep the scaling consistent from the top-left corner */
+            }
+
+            .polaroid {
+                width: 80px; /* Adjust the size for mobile view */
+                height: 110px;
+                padding: 8px; /* Adjust padding for mobile view */
+                font-size: 0.5rem; /* Adjust font size for mobile view */
+            }
+
+            #polaroid1 {
+                top: 110px;
+                left: 50px;
+                transform: rotate(-10deg);
+            }
+
+            #polaroid2 {
+                top: 300px;
+                right: 50px;
+                transform: rotate(5deg);
+            }
+
+            #polaroid3 {
+                bottom: 100px;
+                left: 250px;
+                transform: rotate(-5deg);
+            }
+
+            body {
+                padding: 0;
+                overflow-x: scroll; /* Enable horizontal scrolling if needed */
+            }
+        }
+
+        /* Custom curly strikethrough effect */
+        .curly-strike {
+            position: relative;
+            display: inline-block;
+        }
+
+        .curly-strike::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            border-top: 2px solid red; /* Customize the color and thickness */
+            transform: rotate(-10deg);
+            transform-origin: center;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAxMDAgNDAiPjxwYXRoIGQ9Ik0wIDBoMTAwdi00MEgweiIvPjwvc3ZnPg==') no-repeat;
+            background-size: 100% 100%;
+            background-position: center center;
+            z-index: 1;
+        }
+
+        .curly-strike span {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
 </head>
 <body>
     <div id="content-wrapper">
-        <h1>This is a Mighty Fine Title</h1>
+        <h1>Febin T Rajeev</h1>
         <div id="content">
             <p>
-                &emsp;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ullamcorper dolor sem, at venenatis ligula tempus sed. Proin ullamcorper libero vel nunc rhoncus, eu consectetur lorem consequat. Phasellus commodo purus non elit euismod, nec tincidunt ante fermentum. Pellentesque laoreet, metus blandit vestibulum ultricies, purus erat porttitor ex, ut dignissim odio diam sed felis. Nulla eget viverra diam. Aliquam non sapien quam. Curabitur pellentesque eget orci quis pharetra. Duis diam nunc, dictum ac nibh vitae, sodales varius odio. Fusce id bibendum mauris. Sed bibendum diam at neque tincidunt, a ullamcorper orci aliquet.
+                &emsp;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ullamcorper dolor sem, at venenatis ligula tempus sed...
             </p>
-
             <p>
-                &emsp;Duis vulputate, massa vitae interdum commodo, ante tortor viverra sem, nec suscipit massa elit tempus leo. Sed tristique orci in turpis aliquam, et ultrices nisl interdum. Cras et ante odio. Sed luctus dolor vel eros vestibulum, sit amet imperdiet nulla accumsan. Praesent bibendum eu neque sit amet sollicitudin. Duis feugiat tincidunt fermentum. Nam semper aliquam odio, sed feugiat felis mattis vel. Sed felis nulla, rhoncus non tortor eu, imperdiet pretium nulla. Phasellus nec erat urna. Aliquam tellus elit, consectetur at lacus ac, pretium tempus arcu. Proin risus orci, interdum a magna in, porttitor laoreet turpis.
+                &emsp;Duis vulputate, massa vitae interdum commodo, ante tortor viverra sem, nec suscipit massa elit tempus leo...
             </p>
-
             <p>
-                &emsp;Vestibulum in augue varius orci condimentum ultricies eu in neque. Etiam vitae luctus lectus, in posuere arcu. Vivamus ut feugiat justo. Etiam sed lectus ac ante accumsan gravida. Nulla at dolor id magna congue bibendum non vel neque. Pellentesque congue at tortor eget ornare. In fermentum, sem vel sagittis fermentum, orci neque porta eros, ut tincidunt neque ipsum ac turpis. Nullam vulputate, libero id facilisis elementum, nulla nisi tempor mauris, vel hendrerit lacus ante eget velit. Duis laoreet scelerisque quam. Aliquam erat volutpat. Aliquam pharetra vitae orci ac elementum.
+                &emsp;Vestibulum in augue varius orci condimentum ultricies eu in neque. Etiam vitae luctus lectus, in posuere arcu...
             </p>
-
-           
+            <!-- New paragraph with crossed-out text -->
+            <p>
+                &emsp;Here is a <span class="curly-strike">crossed-out</span> word example. You can <del>remove</del> or <del>modify</del> text as needed.
+            </p>
+        </div>
+        <div class="polaroid" id="polaroid1">
+            <img src="https://unsplash.it/200/200?image=0" alt="Photo 1">
+            <p>Caption 1</p>
+        </div>
+        <div class="polaroid" id="polaroid2">
+            <img src="https://unsplash.it/200/200?image=1" alt="Photo 2">
+            <p>Caption 2</p>
+        </div>
+        <div class="polaroid" id="polaroid3">
+            <img src="https://unsplash.it/200/200?image=2" alt="Photo 3">
+            <p>Caption 3</p>
         </div>
     </div>
 </body>
