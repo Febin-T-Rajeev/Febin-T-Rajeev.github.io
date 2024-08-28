@@ -9,9 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Font Link -->
     <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
-    <!-- Interact.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
-    <style>
+
+   <style>
         body {
             font-family: 'Indie Flower', cursive;
             background-color: grey;
@@ -25,6 +25,7 @@
         }
 
         #content-wrapper {
+            user-select: none;
             width: 800px;
             height: 1000px;
             margin: 0;
@@ -69,7 +70,6 @@
             font-size: 0.9rem;
             color: #333;
             z-index: 10;
-            cursor: move; /* Indicate that the element is draggable */
         }
 
         .polaroid img {
@@ -248,12 +248,12 @@
             <img src="https://unsplash.it/200/200?image=2" alt="Photo 3">
             <p>Caption 3</p>
         </div>
-        <div class="pageflip"></div>
+        <div class="pageflip" id="pageflip"></div>
     </div>
 
     <script>
-        // Initialize interact.js for draggable Polaroid elements
-        interact('.polaroid')
+
+interact('.polaroid')
             .draggable({
                 listeners: {
                     move(event) {
@@ -269,26 +269,48 @@
                 }
             });
 
-        // Pageflip animation logic
-        const pageflip = document.querySelector('.pageflip');
-        document.addEventListener('click', (event) => {
-            if (event.target.closest('.polaroid')) {
-                pageflip.classList.add('show', 'pageflip-animate');
-            } else if (event.target.closest('.pageflip')) {
-                pageflip.classList.remove('pageflip-animate');
-                pageflip.classList.add('pageflipclose-animate');
-            } else {
-                pageflip.classList.remove('pageflip-animate');
-                pageflip.classList.add('pageflipclose-animate');
-            }
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const pageflip = document.getElementById('pageflip');
+            const contentWrapper = document.getElementById('content-wrapper');
 
-        // Ensure the pageflip closes if the click is outside the wrapper
-        document.addEventListener('click', (event) => {
-            if (!event.target.closest('#content-wrapper') && !event.target.closest('.pageflip')) {
-                pageflip.classList.remove('pageflip-animate');
+            // Function to hide pageflip with closing animation
+            function hidePageflip() {
+                // Add the closing animation class
                 pageflip.classList.add('pageflipclose-animate');
+                
+                // Remove the animation class after animation ends to reset for future clicks
+                pageflip.addEventListener('animationend', function() {
+                    pageflip.classList.remove('pageflipclose-animate', 'show');
+                }, { once: true });
             }
+
+            contentWrapper.addEventListener('click', function(event) {
+                // Check if click is within the bottom-right corner of the content-wrapper
+                const rect = contentWrapper.getBoundingClientRect();
+                const isClickInBottomRight = (
+                    event.clientX >= rect.right - 80 &&
+                    event.clientY >= rect.bottom - 80
+                );
+
+                if (isClickInBottomRight) {
+                    // Show pageflip with animation
+                    pageflip.classList.add('show', 'pageflip-animate');
+
+                    // Remove the animation class after animation ends to reset for future clicks
+                    pageflip.addEventListener('animationend', function() {
+                        pageflip.classList.remove('pageflip-animate');
+                    }, { once: true });
+                } else {
+                    hidePageflip(); // Hide pageflip if clicked outside the bottom-right corner
+                }
+            });
+
+            // Hide pageflip when clicking anywhere outside the content-wrapper
+            document.addEventListener('click', function(event) {
+                if (!contentWrapper.contains(event.target) && !pageflip.contains(event.target)) {
+                    hidePageflip();
+                }
+            });
         });
     </script>
 </body>
