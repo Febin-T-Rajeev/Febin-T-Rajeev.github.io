@@ -34,6 +34,7 @@
             border-radius: .2rem;
             box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.3);
             position: relative;
+            overflow: hidden; /* Ensure .pageflip doesn't overflow */
         }
 
         h1 {
@@ -132,7 +133,6 @@
             }
         }
 
-        /* Custom curly strikethrough effect */
         .curly-strike {
             position: relative;
             display: inline-block;
@@ -144,7 +144,7 @@
             left: 0;
             right: 0;
             top: 50%;
-            border-top: 2px solid red; /* Customize the color and thickness */
+            border-top: 2px solid #575757;
             transform: rotate(-10deg);
             transform-origin: center;
             background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAxMDAgNDAiPjxwYXRoIGQ9Ik0wIDBoMTAwdi00MEgweiIvPjwvc3ZnPg==') no-repeat;
@@ -156,6 +156,62 @@
         .curly-strike span {
             position: relative;
             z-index: 2;
+        }
+
+        /* Page flip effect */
+        .pageflip {
+            display: none; /* Hide the pageflip by default */
+            position: absolute;
+            z-index: 1;
+            width: 0;
+            height: 0;
+            bottom: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            border-top-left-radius: .2rem; /* Top-left corner */
+            transition: all 0.3s;
+        }
+
+        .pageflip.show {
+            display: block; /* Show pageflip when class 'show' is added */
+            width: 80px;
+            height: 80px;
+            box-shadow: -5px -5px 40px rgba(0,0,0,1);
+            background: rgba(255, 255, 255, 0.3); /* More transparent on hover */
+            transform: scale(1.5); /* Scale up the pageflip for animation */
+        }
+
+        /* Animation effect */
+        .pageflip-animate {
+            animation: flipAnimation 0.5s forwards;
+        }
+        .pageflipclose-animate {
+            animation: flipcloseAnimation 0.5s forwards;
+        }
+
+        @keyframes flipAnimation {
+            0% {
+                width: 0;
+                height: 0;
+                transform: scale(0.5);
+            }
+            100% {
+                width: 80px;
+                height: 80px;
+                transform: scale(1.5);
+            }
+        }
+        @keyframes flipcloseAnimation {
+            0% {
+                width: 80px;
+                height: 80px;
+                transform: scale(1.5);
+            }
+            100% {
+                width: 0;
+                height: 0;
+                transform: scale(0.5);
+            }
         }
     </style>
 </head>
@@ -189,6 +245,53 @@
             <img src="https://unsplash.it/200/200?image=2" alt="Photo 3">
             <p>Caption 3</p>
         </div>
+        <div class="pageflip" id="pageflip"></div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pageflip = document.getElementById('pageflip');
+            const contentWrapper = document.getElementById('content-wrapper');
+
+            // Function to hide pageflip with closing animation
+            function hidePageflip() {
+                // Add the closing animation class
+                pageflip.classList.add('pageflipclose-animate');
+                
+                // Remove the animation class after animation ends to reset for future clicks
+                pageflip.addEventListener('animationend', function() {
+                    pageflip.classList.remove('pageflipclose-animate', 'show');
+                }, { once: true });
+            }
+
+            contentWrapper.addEventListener('click', function(event) {
+                // Check if click is within the bottom-right corner of the content-wrapper
+                const rect = contentWrapper.getBoundingClientRect();
+                const isClickInBottomRight = (
+                    event.clientX >= rect.right - 80 &&
+                    event.clientY >= rect.bottom - 80
+                );
+
+                if (isClickInBottomRight) {
+                    // Show pageflip with animation
+                    pageflip.classList.add('show', 'pageflip-animate');
+
+                    // Remove the animation class after animation ends to reset for future clicks
+                    pageflip.addEventListener('animationend', function() {
+                        pageflip.classList.remove('pageflip-animate');
+                    }, { once: true });
+                } else {
+                    hidePageflip(); // Hide pageflip if clicked outside the bottom-right corner
+                }
+            });
+
+            // Hide pageflip when clicking anywhere outside the content-wrapper
+            document.addEventListener('click', function(event) {
+                if (!contentWrapper.contains(event.target) && !pageflip.contains(event.target)) {
+                    hidePageflip();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
