@@ -11,6 +11,13 @@ body {
     justify-content: center;
     align-items: center;
 }
+.polaroid {
+    cursor: grab;
+}
+
+.polaroid:active {
+    cursor: grabbing;
+}
 
 /* #content-wrapper {
     width: 800px; 
