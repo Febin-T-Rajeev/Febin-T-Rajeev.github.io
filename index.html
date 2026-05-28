@@ -40,13 +40,27 @@
             border-radius: .2rem;
             box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.3);
             position: relative;
-            overflow: hidden; /* Ensure .pageflip doesn't overflow */
+            overflow: hidden;
+            cursor: default;
         }
+        
+        /* Canvas for drawing burn holes */
+        #burn-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
 
         h1 {
             font-size: 3rem;
             text-align: center;
             color: #575757;
+            position: relative;
+            z-index: 10;
         }
 
         #content {
@@ -56,6 +70,9 @@
             color: #575757;
             clear: both;
             padding-top: 20px;
+            pointer-events: none;
+            position: relative;
+            z-index: 10;
         }
 
         p {
@@ -72,16 +89,16 @@
             text-align: center;
             font-size: 0.9rem;
             color: #333;
-            z-index: 10;
-            cursor: grab !important; /* Shows hand cursor on hover - NO plus sign */
+            z-index: 15;
+            cursor: grab !important;
         }
 
         .polaroid:active {
-            cursor: grabbing !important; /* Shows grabbing hand while dragging */
+            cursor: grabbing !important;
         }
 
         .polaroid.dragging {
-            cursor: grabbing !important; /* Maintains grabbing during drag */
+            cursor: grabbing !important;
         }
 
         .polaroid img {
@@ -107,21 +124,78 @@
             left: 380px;
             transform: rotate(-5deg);
         }
+        
+        /* Burning effects */
+        .ember {
+            position: absolute;
+            pointer-events: none;
+            z-index: 6;
+            border-radius: 50%;
+            animation: emberFloat 1s ease-out forwards;
+        }
+        
+        @keyframes emberFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                background: radial-gradient(circle, #ff6600, #ff3300);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0);
+                background: radial-gradient(circle, #442200, #1a0a00);
+            }
+        }
+        
+        .smoke {
+            position: absolute;
+            pointer-events: none;
+            z-index: 6;
+            border-radius: 50%;
+            background: rgba(100, 80, 60, 0.5);
+            filter: blur(10px);
+            animation: smokeRise 2s ease-out forwards;
+        }
+        
+        @keyframes smokeRise {
+            0% {
+                opacity: 0.7;
+                transform: translateY(0) scale(0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-60px) scale(2.5);
+            }
+        }
+        
+        .spark {
+            position: absolute;
+            pointer-events: none;
+            z-index: 6;
+            border-radius: 50%;
+            background: #ff8800;
+            animation: sparkFade 0.3s ease-out forwards;
+        }
+        
+        @keyframes sparkFade {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0); }
+        }
 
         /* Mobile view adjustments */
         @media (max-width: 768px) {
             #content-wrapper {
-                width: 100vw; /* Set width to 100% of the viewport width */
-                height: 100vh; /* Set height to 100% of the viewport height */
-                transform: scale(1); /* Scale down the entire wrapper */
-                transform-origin: top left; /* Keep the scaling consistent from the top-left corner */
+                width: 100vw;
+                height: 100vh;
+                transform: scale(1);
+                transform-origin: top left;
             }
 
             .polaroid {
-                width: 80px; /* Adjust the size for mobile view */
+                width: 80px;
                 height: 110px;
-                padding: 8px; /* Adjust padding for mobile view */
-                font-size: 0.5rem; /* Adjust font size for mobile view */
+                padding: 8px;
+                font-size: 0.5rem;
             }
 
             #polaroid11 {
@@ -144,7 +218,7 @@
 
             body {
                 padding: 0;
-                overflow-x: scroll; /* Enable horizontal scrolling if needed */
+                overflow-x: scroll;
             }
         }
 
@@ -175,25 +249,25 @@
 
         /* Page flip effect */
         .pageflip {
-            display: none; /* Hide the pageflip by default */
+            display: none;
             position: absolute;
-            z-index: 1;
+            z-index: 20;
             width: 0;
             height: 0;
             bottom: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
-            border-top-left-radius: .2rem; /* Top-left corner */
+            background: rgba(255, 255, 255, 0.8);
+            border-top-left-radius: .2rem;
             transition: all 0.3s;
         }
 
         .pageflip.show {
-            display: block; /* Show pageflip when class 'show' is added */
+            display: block;
             width: 80px;
             height: 80px;
             box-shadow: -5px -5px 40px rgba(0,0,0,1);
-            background: rgba(255, 255, 255, 0.3); /* More transparent on hover */
-            transform: scale(1.5); /* Scale up the pageflip for animation */
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.5);
         }
 
         /* Animation effect */
@@ -228,10 +302,22 @@
                 transform: scale(0.5);
             }
         }
+        h1 {
+    position: relative;
+    z-index: 2;
+}
+
+#content {
+    position: relative;
+    z-index: 2;
+}
+
+
     </style>
 </head>
 <body>
     <div id="content-wrapper">
+        <canvas id="burn-canvas"></canvas>
         <h1>Febin T Rajeev</h1>
         <div id="content">
     <p>
@@ -317,16 +403,288 @@
                 'polaroid6', 'polaroid7', 'polaroid8', 'polaroid9', 'polaroid10'
             ];
         
-            let zIndexCounter = 10; // Counter to track the z-index for stacking
-        
+            let zIndexCounter = 10;
+            
+            // Setup canvas for permanent burn holes
+            const canvas = document.getElementById('burn-canvas');
+            const wrapper = document.getElementById('content-wrapper');
+            
+            function resizeCanvas() {
+                const rect = wrapper.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+                canvas.style.width = rect.width + 'px';
+                canvas.style.height = rect.height + 'px';
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Generate random organic burn shape
+            function drawOrganicBurn(x, y, size) {
+
+    ctx.save();
+
+    // Create irregular organic burn shape
+    ctx.beginPath();
+
+    const points = [];
+    const numPoints = 25;
+
+    for (let i = 0; i < numPoints; i++) {
+
+        const angle = (i / numPoints) * Math.PI * 2;
+
+        // More natural random edges
+        const noise =
+            0.75 +
+            Math.random() * 0.45;
+
+        const radius =
+            (size / 2) * noise;
+
+        const px =
+            x + Math.cos(angle) * radius;
+
+        const py =
+            y + Math.sin(angle) * radius;
+
+        points.push({ x: px, y: py });
+    }
+
+    ctx.moveTo(points[0].x, points[0].y);
+
+    for (let i = 0; i < points.length; i++) {
+
+        const current = points[i];
+        const next = points[(i + 1) % points.length];
+
+        const cx =
+            (current.x + next.x) / 2;
+
+        const cy =
+            (current.y + next.y) / 2;
+
+        ctx.quadraticCurveTo(
+            current.x,
+            current.y,
+            cx,
+            cy
+        );
+    }
+
+    ctx.closePath();
+
+    // MAIN CHARRED FILL
+    const gradient = ctx.createRadialGradient(
+        x,
+        y,
+        0,
+        x,
+        y,
+        size
+    );
+
+    gradient.addColorStop(0, '#000000');
+    gradient.addColorStop(0.18, '#0d0d0d');
+    gradient.addColorStop(0.38, '#1a1a1a');
+    gradient.addColorStop(0.55, '#2b1d14');
+    gradient.addColorStop(0.72, '#4a2d1b');
+    gradient.addColorStop(1, 'rgba(90,55,30,0)');
+
+    ctx.fillStyle = gradient;
+
+    // Smoky blur
+    ctx.shadowBlur = 35;
+    ctx.shadowColor = 'rgba(0,0,0,0.8)';
+
+    ctx.fill();
+
+    // ASH PARTICLES
+    for (let i = 0; i < 120; i++) {
+
+        const angle =
+            Math.random() * Math.PI * 2;
+
+        const radius =
+            Math.random() * size * 0.6;
+
+        const px =
+            x + Math.cos(angle) * radius;
+
+        const py =
+            y + Math.sin(angle) * radius;
+
+        const particleSize =
+            Math.random() * 2.5;
+
+        ctx.beginPath();
+
+        // random charcoal/ash colors
+        const colors = [
+            'rgba(0,0,0,0.45)',
+            'rgba(25,25,25,0.35)',
+            'rgba(50,30,15,0.25)',
+            'rgba(90,60,40,0.18)'
+        ];
+
+        ctx.fillStyle =
+            colors[Math.floor(Math.random() * colors.length)];
+
+        ctx.arc(
+            px,
+            py,
+            particleSize,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+    }
+
+    // DARK CENTER SCORCH
+    ctx.beginPath();
+
+    ctx.fillStyle =
+        'rgba(0,0,0,0.45)';
+
+    ctx.arc(
+        x,
+        y,
+        size * 0.18,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    // RANDOM BURNT CRACKS
+    for (let i = 0; i < 12; i++) {
+
+        const startAngle =
+            Math.random() * Math.PI * 2;
+
+        const startRadius =
+            Math.random() * size * 0.2;
+
+        const startX =
+            x + Math.cos(startAngle) * startRadius;
+
+        const startY =
+            y + Math.sin(startAngle) * startRadius;
+
+        const endAngle =
+            startAngle + (Math.random() - 0.5);
+
+        const endRadius =
+            size * (0.3 + Math.random() * 0.5);
+
+        const endX =
+            x + Math.cos(endAngle) * endRadius;
+
+        const endY =
+            y + Math.sin(endAngle) * endRadius;
+
+        ctx.beginPath();
+
+        ctx.moveTo(startX, startY);
+
+        ctx.lineTo(endX, endY);
+
+        ctx.strokeStyle =
+            'rgba(15,15,15,0.2)';
+
+        ctx.lineWidth =
+            Math.random() * 1.5;
+
+        ctx.stroke();
+    }
+
+    // HEAT GLOW
+    const glow = ctx.createRadialGradient(
+        x,
+        y,
+        size * 0.1,
+        x,
+        y,
+        size * 0.6
+    );
+
+    glow.addColorStop(0, 'rgba(255,120,0,0.08)');
+    glow.addColorStop(0.5, 'rgba(255,80,0,0.03)');
+    glow.addColorStop(1, 'rgba(255,0,0,0)');
+
+    ctx.beginPath();
+
+    ctx.fillStyle = glow;
+
+    ctx.arc(
+        x,
+        y,
+        size * 0.7,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    ctx.restore();
+}
+            // Track drag speed for burning effect on PAPER
+            let isDraggingOnPaper = false;
+            let lastPaperX = 0;
+            let lastPaperY = 0;
+            let lastPaperTime = 0;
+            let paperDragSpeeds = [];
+            let accumulatedBurnIntensity = 0;
+            let currentBurnX = 0;
+            let currentBurnY = 0;
+            
+            // Function to create burn hole with random organic shape
+            function createBurnHole(x, y, intensity) {
+                // Calculate size based on intensity
+                const size = Math.min(70, 25 + Math.floor(intensity / 2));
+                
+                // Draw organic burn shape on canvas
+                drawOrganicBurn(x, y, size);
+                
+                // Create ember particles
+                const emberCount = 6 + Math.floor(size / 6);
+                for (let i = 0; i < emberCount; i++) {
+                    const ember = document.createElement('div');
+                    ember.className = 'ember';
+                    const emberSize = 2 + Math.random() * 5;
+                    ember.style.width = emberSize + 'px';
+                    ember.style.height = emberSize + 'px';
+                    ember.style.left = (x - emberSize/2 + (Math.random() - 0.5) * size) + 'px';
+                    ember.style.top = (y - emberSize/2 + (Math.random() - 0.5) * size) + 'px';
+                    wrapper.appendChild(ember);
+                    setTimeout(() => ember.remove(), 1000);
+                }
+                
+                // Create smoke
+                for (let i = 0; i < 4; i++) {
+                    const smoke = document.createElement('div');
+                    smoke.className = 'smoke';
+                    const smokeSize = 20 + Math.random() * 25;
+                    smoke.style.width = smokeSize + 'px';
+                    smoke.style.height = smokeSize + 'px';
+                    smoke.style.left = (x - smokeSize/2 + (Math.random() - 0.5) * 30) + 'px';
+                    smoke.style.top = (y - smokeSize/2 + (Math.random() - 0.5) * 20) + 'px';
+                    wrapper.appendChild(smoke);
+                    setTimeout(() => smoke.remove(), 2000);
+                }
+            }
+            
             // Initialize z-index and store initial rotation for all Polaroids
             polaroidIds.forEach((id, index) => {
                 const polaroid = document.getElementById(id);
                 if (polaroid) {
                     polaroid.style.position = 'absolute';
-                    polaroid.style.zIndex = zIndexCounter + index; // Set initial z-index
+                    polaroid.style.zIndex = zIndexCounter + index;
                     
-                    // Store initial rotation
                     const style = window.getComputedStyle(polaroid);
                     const transform = style.transform || 'none';
                     const rotateMatch = transform.match(/rotate\((-?\d+\.?\d*)deg\)/);
@@ -336,11 +694,11 @@
             });
         
             function getRandomRotation() {
-                return Math.floor(Math.random() * 20) - 10; // Random rotation between -10deg and 10deg
+                return Math.floor(Math.random() * 20) - 10;
             }
         
             function getRandomOffset() {
-                return Math.floor(Math.random() * 40) + 20; // Random offset between 20px and 60px
+                return Math.floor(Math.random() * 40) + 20;
             }
         
             polaroidIds.forEach((id, index) => {
@@ -350,18 +708,109 @@
                     const offset = getRandomOffset();
         
                     polaroid.style.position = 'absolute';
-                    polaroid.style.bottom = `${offset}px`; // Random vertical position
-                    polaroid.style.left = '30px'; // Fixed horizontal position
-                    polaroid.style.transform = `rotate(${rotation}deg)`; // Random rotation
-        
-                    // Ensure Polaroids stack on top of each other
-                    polaroid.style.zIndex = 10 + index; // Increment z-index to stack Polaroids
+                    polaroid.style.bottom = `${offset}px`;
+                    polaroid.style.left = '30px';
+                    polaroid.style.transform = `rotate(${rotation}deg)`;
+                    polaroid.style.zIndex = 10 + index;
+                    polaroid.setAttribute('data-rotation', rotation);
+                }
+            });
+            
+            // BURN EFFECT ON PAPER - Mouse events on content-wrapper
+            wrapper.addEventListener('mousedown', function(e) {
+                // Only trigger if not clicking on a polaroid
+                if (!e.target.closest('.polaroid')) {
+                    isDraggingOnPaper = true;
+                    lastPaperX = e.clientX;
+                    lastPaperY = e.clientY;
+                    lastPaperTime = Date.now();
+                    paperDragSpeeds = [];
+                    accumulatedBurnIntensity = 0;
+                    
+                    // Get starting position
+                    const wrapperRect = wrapper.getBoundingClientRect();
+                    currentBurnX = e.clientX - wrapperRect.left;
+                    currentBurnY = e.clientY - wrapperRect.top;
+                    
+                    // Change cursor on paper when dragging
+                    wrapper.style.cursor = 'grabbing';
+                }
+            });
+            
+            wrapper.addEventListener('mousemove', function(e) {
+                if (isDraggingOnPaper) {
+                    const currentX = e.clientX;
+                    const currentY = e.clientY;
+                    const currentTime = Date.now();
+                    const deltaTime = currentTime - lastPaperTime;
+                    
+                    // Get position relative to content-wrapper
+                    const wrapperRect = wrapper.getBoundingClientRect();
+                    const burnX = currentX - wrapperRect.left;
+                    const burnY = currentY - wrapperRect.top;
+                    
+                    if (deltaTime > 0 && lastPaperX !== 0) {
+                        const deltaX = Math.abs(currentX - lastPaperX);
+                        const deltaY = Math.abs(currentY - lastPaperY);
+                        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                        const speed = distance / deltaTime;
+                        
+                        paperDragSpeeds.push(speed);
+                        if (paperDragSpeeds.length > 5) paperDragSpeeds.shift();
+                        
+                        const avgSpeed = paperDragSpeeds.reduce((a, b) => a + b, 0) / paperDragSpeeds.length;
+                        
+                        // Build up burn intensity with back-and-forth motion
+                        if (avgSpeed > 0.35) {
+                            accumulatedBurnIntensity += avgSpeed * 1.5;
+                            
+                            // Add small visual feedback while rubbing
+                            if (avgSpeed > 0.5 && Math.random() < 0.4) {
+                                const spark = document.createElement('div');
+                                spark.className = 'spark';
+                                spark.style.left = (burnX - 2) + 'px';
+                                spark.style.top = (burnY - 2) + 'px';
+                                spark.style.width = '3px';
+                                spark.style.height = '3px';
+                                wrapper.appendChild(spark);
+                                setTimeout(() => spark.remove(), 200);
+                            }
+                        }
+                        
+                        // When enough intensity builds up, create a burn hole!
+                        if (accumulatedBurnIntensity >= 12 && burnX >= 0 && burnX <= wrapperRect.width && burnY >= 0 && burnY <= wrapperRect.height) {
+                            // Create organic burn hole
+                            createBurnHole(burnX, burnY, accumulatedBurnIntensity);
+                            
+                            // Reset intensity for that spot
+                            accumulatedBurnIntensity = 0;
+                            
+                            // Small screen shake effect
+                            wrapper.style.transform = 'translateX(1px)';
+                            setTimeout(() => { wrapper.style.transform = ''; }, 50);
+                        }
+                    }
+                    
+                    lastPaperX = currentX;
+                    lastPaperY = currentY;
+                    lastPaperTime = currentTime;
+                    currentBurnX = burnX;
+                    currentBurnY = burnY;
+                }
+            });
+            
+            window.addEventListener('mouseup', function() {
+                if (isDraggingOnPaper) {
+                    isDraggingOnPaper = false;
+                    wrapper.style.cursor = 'default';
+                    paperDragSpeeds = [];
+                    accumulatedBurnIntensity = 0;
                 }
             });
         
             interact('.polaroid')
                 .draggable({
-                    inertia: true, // Add inertia for smooth dragging
+                    inertia: true,
                     modifiers: [
                         interact.modifiers.restrict({
                             restriction: 'parent',
@@ -370,10 +819,8 @@
                     ],
                     listeners: {
                         start(event) {
-                            // ADDED: Add dragging class for cursor
                             event.target.classList.add('dragging');
                             
-                            // Set the z-index of the dragged Polaroid to the highest value
                             const draggedPolaroid = event.target;
                             draggedPolaroid.style.zIndex = Math.max(...polaroidIds.map(id => {
                                 const polaroid = document.getElementById(id);
@@ -392,14 +839,12 @@
                             target.setAttribute('data-y', y);
                         },
                         end(event) {
-                            // ADDED: Remove dragging class to revert cursor
                             event.target.classList.remove('dragging');
                             
                             const target = event.target;
                             const rect = target.getBoundingClientRect();
                             const contentWrapperRect = document.getElementById('content-wrapper').getBoundingClientRect();
                             
-                            // Check if the Polaroid is dropped in the bottom-left corner
                             const isInBottomLeftCorner = (
                                 rect.right > contentWrapperRect.left &&
                                 rect.bottom > contentWrapperRect.top &&
@@ -408,7 +853,6 @@
                             );
                             
                             if (isInBottomLeftCorner) {
-                                // Apply random rotation
                                 const randomRotation = getRandomRotation();
                                 target.style.transform += ` rotate(${randomRotation}deg)`;
                                 target.setAttribute('data-rotation', parseFloat(target.style.transform.match(/rotate\((-?\d+\.?\d*)deg\)/)[1]));
