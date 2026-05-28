@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio</title>
+    <title>Portfolio • permanent burns</title>
     <!-- Preconnect for performance -->
-    <meta name="description" content="Portfolio of Febin T Rajeev, showcasing projects, skills, and work experience.">
-    <meta name="keywords" content="Febin T Rajeev, febin t rajeev, Febin, Portfolio, Web Developer, Projects, Skills, Experience">
+    <meta name="description" content="Portfolio of Febin T Rajeev, showcasing projects, skills, and work experience. Burns stay forever.">
+    <meta name="keywords" content="Febin T Rajeev, febin t rajeev, Febin, Portfolio, Web Developer, Projects, Skills, Experience, burnt paper">
     <meta name="author" content="Febin T Rajeev">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,14 +46,14 @@
         
         /* Canvas for drawing burn holes */
         #burn-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 5;
-}
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
 
         h1 {
             font-size: 3rem;
@@ -303,16 +303,14 @@
             }
         }
         h1 {
-    position: relative;
-    z-index: 2;
-}
+            position: relative;
+            z-index: 2;
+        }
 
-#content {
-    position: relative;
-    z-index: 2;
-}
-
-
+        #content {
+            position: relative;
+            z-index: 2;
+        }
     </style>
 </head>
 <body>
@@ -320,26 +318,22 @@
         <canvas id="burn-canvas"></canvas>
         <h1>Febin T Rajeev</h1>
         <div id="content">
-    <p>
-        &emsp;Wazzzaa! My name is Febin T Rajeev. I completed my Bachelor of Computer Applications (BCA) and Master of Computer Applications (MCA), building a strong foundation in software development, problem-solving, and modern technologies.
-    </p>
-
-    <p>
-        &emsp;I am currently working at Primecrown as an <span class="curly-strike">intern</span> Software Engineer, where I work on backend systems, APIs, automation, and full-stack application development.
-    </p>
-
-    <p>
-        &emsp;I enjoy creating applications, games, automation tools, and experimental projects. I am passionate about learning new technologies and improving my skills in software engineering and system design.
-    </p>
-
-    <p>
-        &emsp;Apart from programming, my hobbies include gaming, exploring new tech, customizing Linux systems, and experimenting with creative software ideas.
-    </p>
-
-    <p>
-        &emsp;Yep... thats me i guess. Peace out.
-    </p>
-</div>
+            <p>
+                &emsp;Wazzzaa! My name is Febin T Rajeev. I completed my Bachelor of Computer Applications (BCA) and Master of Computer Applications (MCA), building a strong foundation in software development, problem-solving, and modern technologies.
+            </p>
+            <p>
+                &emsp;I am currently working at Primecrown as an <span class="curly-strike">intern</span> Software Engineer, where I work on backend systems, APIs, automation, and full-stack application development.
+            </p>
+            <p>
+                &emsp;I enjoy creating applications, games, automation tools, and experimental projects. I am passionate about learning new technologies and improving my skills in software engineering and system design.
+            </p>
+            <p>
+                &emsp;Apart from programming, my hobbies include gaming, exploring new tech, customizing Linux systems, and experimenting with creative software ideas.
+            </p>
+            <p>
+                &emsp;Yep... thats me i guess. Peace out.
+            </p>
+        </div>
         <div class="polaroid" id="polaroid11">
             <img src="src\91345809.jpg" alt="Photo 1">
             <p>#Pic</p>
@@ -409,6 +403,10 @@
             const canvas = document.getElementById('burn-canvas');
             const wrapper = document.getElementById('content-wrapper');
             
+            // ========== LOCALSTORAGE PERSISTENCE ==========
+            const STORAGE_KEY = 'febin_burnt_paper_permanent_v1';
+            let burnHistory = []; // each entry: { x, y, size }
+            
             function resizeCanvas() {
                 const rect = wrapper.getBoundingClientRect();
                 canvas.width = rect.width;
@@ -417,240 +415,136 @@
                 canvas.style.height = rect.height + 'px';
             }
             
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-            
             const ctx = canvas.getContext('2d');
             
-            // Generate random organic burn shape
-            function drawOrganicBurn(x, y, size) {
-
-    ctx.save();
-
-    // Create irregular organic burn shape
-    ctx.beginPath();
-
-    const points = [];
-    const numPoints = 25;
-
-    for (let i = 0; i < numPoints; i++) {
-
-        const angle = (i / numPoints) * Math.PI * 2;
-
-        // More natural random edges
-        const noise =
-            0.75 +
-            Math.random() * 0.45;
-
-        const radius =
-            (size / 2) * noise;
-
-        const px =
-            x + Math.cos(angle) * radius;
-
-        const py =
-            y + Math.sin(angle) * radius;
-
-        points.push({ x: px, y: py });
-    }
-
-    ctx.moveTo(points[0].x, points[0].y);
-
-    for (let i = 0; i < points.length; i++) {
-
-        const current = points[i];
-        const next = points[(i + 1) % points.length];
-
-        const cx =
-            (current.x + next.x) / 2;
-
-        const cy =
-            (current.y + next.y) / 2;
-
-        ctx.quadraticCurveTo(
-            current.x,
-            current.y,
-            cx,
-            cy
-        );
-    }
-
-    ctx.closePath();
-
-    // MAIN CHARRED FILL
-    const gradient = ctx.createRadialGradient(
-        x,
-        y,
-        0,
-        x,
-        y,
-        size
-    );
-
-    gradient.addColorStop(0, '#000000');
-    gradient.addColorStop(0.18, '#0d0d0d');
-    gradient.addColorStop(0.38, '#1a1a1a');
-    gradient.addColorStop(0.55, '#2b1d14');
-    gradient.addColorStop(0.72, '#4a2d1b');
-    gradient.addColorStop(1, 'rgba(90,55,30,0)');
-
-    ctx.fillStyle = gradient;
-
-    // Smoky blur
-    ctx.shadowBlur = 35;
-    ctx.shadowColor = 'rgba(0,0,0,0.8)';
-
-    ctx.fill();
-
-    // ASH PARTICLES
-    for (let i = 0; i < 120; i++) {
-
-        const angle =
-            Math.random() * Math.PI * 2;
-
-        const radius =
-            Math.random() * size * 0.6;
-
-        const px =
-            x + Math.cos(angle) * radius;
-
-        const py =
-            y + Math.sin(angle) * radius;
-
-        const particleSize =
-            Math.random() * 2.5;
-
-        ctx.beginPath();
-
-        // random charcoal/ash colors
-        const colors = [
-            'rgba(0,0,0,0.45)',
-            'rgba(25,25,25,0.35)',
-            'rgba(50,30,15,0.25)',
-            'rgba(90,60,40,0.18)'
-        ];
-
-        ctx.fillStyle =
-            colors[Math.floor(Math.random() * colors.length)];
-
-        ctx.arc(
-            px,
-            py,
-            particleSize,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fill();
-    }
-
-    // DARK CENTER SCORCH
-    ctx.beginPath();
-
-    ctx.fillStyle =
-        'rgba(0,0,0,0.45)';
-
-    ctx.arc(
-        x,
-        y,
-        size * 0.18,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-    // RANDOM BURNT CRACKS
-    for (let i = 0; i < 12; i++) {
-
-        const startAngle =
-            Math.random() * Math.PI * 2;
-
-        const startRadius =
-            Math.random() * size * 0.2;
-
-        const startX =
-            x + Math.cos(startAngle) * startRadius;
-
-        const startY =
-            y + Math.sin(startAngle) * startRadius;
-
-        const endAngle =
-            startAngle + (Math.random() - 0.5);
-
-        const endRadius =
-            size * (0.3 + Math.random() * 0.5);
-
-        const endX =
-            x + Math.cos(endAngle) * endRadius;
-
-        const endY =
-            y + Math.sin(endAngle) * endRadius;
-
-        ctx.beginPath();
-
-        ctx.moveTo(startX, startY);
-
-        ctx.lineTo(endX, endY);
-
-        ctx.strokeStyle =
-            'rgba(15,15,15,0.2)';
-
-        ctx.lineWidth =
-            Math.random() * 1.5;
-
-        ctx.stroke();
-    }
-
-    // HEAT GLOW
-    const glow = ctx.createRadialGradient(
-        x,
-        y,
-        size * 0.1,
-        x,
-        y,
-        size * 0.6
-    );
-
-    glow.addColorStop(0, 'rgba(255,120,0,0.08)');
-    glow.addColorStop(0.5, 'rgba(255,80,0,0.03)');
-    glow.addColorStop(1, 'rgba(255,0,0,0)');
-
-    ctx.beginPath();
-
-    ctx.fillStyle = glow;
-
-    ctx.arc(
-        x,
-        y,
-        size * 0.7,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-    ctx.restore();
-}
-            // Track drag speed for burning effect on PAPER
-            let isDraggingOnPaper = false;
-            let lastPaperX = 0;
-            let lastPaperY = 0;
-            let lastPaperTime = 0;
-            let paperDragSpeeds = [];
-            let accumulatedBurnIntensity = 0;
-            let currentBurnX = 0;
-            let currentBurnY = 0;
+            // Same organic burn drawing function (unchanged) but WITHOUT random variation for redraw consistency?
+            // We'll keep exact drawOrganicBurn but for replay we need deterministic? Actually we redraw with stored size/position
+            // and we will reuse drawOrganicBurnSaved for loading from history, BUT to match original visual we keep the random
+            // shape but burn mark must be recreated exactly? The randomness makes each burn unique when created, but when reloaded
+            // we redraw using a similar random process based on same size & position – it will look slightly different but still burnt.
+            // For true permanence we'd need to store burn shape data, but that's overkill; users won't mind organic variety on reload.
+            // I'll keep the spirit of "burns stay forever" meaning holes are present on reload, shape may vary a bit but intensity remains.
             
-            // Function to create burn hole with random organic shape
-            function createBurnHole(x, y, intensity) {
-                // Calculate size based on intensity
+            function drawOrganicBurn(x, y, size) {
+                ctx.save();
+                ctx.beginPath();
+                const points = [];
+                const numPoints = 25;
+                for (let i = 0; i < numPoints; i++) {
+                    const angle = (i / numPoints) * Math.PI * 2;
+                    const noise = 0.75 + Math.random() * 0.45;
+                    const radius = (size / 2) * noise;
+                    const px = x + Math.cos(angle) * radius;
+                    const py = y + Math.sin(angle) * radius;
+                    points.push({ x: px, y: py });
+                }
+                ctx.moveTo(points[0].x, points[0].y);
+                for (let i = 0; i < points.length; i++) {
+                    const current = points[i];
+                    const next = points[(i + 1) % points.length];
+                    const cx = (current.x + next.x) / 2;
+                    const cy = (current.y + next.y) / 2;
+                    ctx.quadraticCurveTo(current.x, current.y, cx, cy);
+                }
+                ctx.closePath();
+                const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
+                gradient.addColorStop(0, '#000000');
+                gradient.addColorStop(0.18, '#0d0d0d');
+                gradient.addColorStop(0.38, '#1a1a1a');
+                gradient.addColorStop(0.55, '#2b1d14');
+                gradient.addColorStop(0.72, '#4a2d1b');
+                gradient.addColorStop(1, 'rgba(90,55,30,0)');
+                ctx.fillStyle = gradient;
+                ctx.shadowBlur = 35;
+                ctx.shadowColor = 'rgba(0,0,0,0.8)';
+                ctx.fill();
+                // ASH PARTICLES
+                for (let i = 0; i < 120; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const radius = Math.random() * size * 0.6;
+                    const px = x + Math.cos(angle) * radius;
+                    const py = y + Math.sin(angle) * radius;
+                    const particleSize = Math.random() * 2.5;
+                    ctx.beginPath();
+                    const colors = ['rgba(0,0,0,0.45)', 'rgba(25,25,25,0.35)', 'rgba(50,30,15,0.25)', 'rgba(90,60,40,0.18)'];
+                    ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+                    ctx.arc(px, py, particleSize, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.beginPath();
+                ctx.fillStyle = 'rgba(0,0,0,0.45)';
+                ctx.arc(x, y, size * 0.18, 0, Math.PI * 2);
+                ctx.fill();
+                for (let i = 0; i < 12; i++) {
+                    const startAngle = Math.random() * Math.PI * 2;
+                    const startRadius = Math.random() * size * 0.2;
+                    const startX = x + Math.cos(startAngle) * startRadius;
+                    const startY = y + Math.sin(startAngle) * startRadius;
+                    const endAngle = startAngle + (Math.random() - 0.5);
+                    const endRadius = size * (0.3 + Math.random() * 0.5);
+                    const endX = x + Math.cos(endAngle) * endRadius;
+                    const endY = y + Math.sin(endAngle) * endRadius;
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(endX, endY);
+                    ctx.strokeStyle = 'rgba(15,15,15,0.2)';
+                    ctx.lineWidth = Math.random() * 1.5;
+                    ctx.stroke();
+                }
+                const glow = ctx.createRadialGradient(x, y, size * 0.1, x, y, size * 0.6);
+                glow.addColorStop(0, 'rgba(255,120,0,0.08)');
+                glow.addColorStop(0.5, 'rgba(255,80,0,0.03)');
+                glow.addColorStop(1, 'rgba(255,0,0,0)');
+                ctx.beginPath();
+                ctx.fillStyle = glow;
+                ctx.arc(x, y, size * 0.7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+            
+            // Save current burn history to localStorage
+            function saveBurnHistory() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(burnHistory));
+            }
+            
+            // Load burn history and redraw all
+            function loadBurnHistoryAndRedraw() {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    try {
+                        const parsed = JSON.parse(stored);
+                        if (Array.isArray(parsed)) {
+                            burnHistory = parsed;
+                        } else {
+                            burnHistory = [];
+                        }
+                    } catch(e) { burnHistory = []; }
+                } else {
+                    burnHistory = [];
+                }
+                // redraw all burns on canvas
+                redrawAllBurns();
+            }
+            
+            function redrawAllBurns() {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let burn of burnHistory) {
+                    if (burn && typeof burn.x === 'number' && typeof burn.y === 'number' && burn.size) {
+                        drawOrganicBurn(burn.x, burn.y, burn.size);
+                    }
+                }
+            }
+            
+            // Add permanent burn (with storage)
+            function addPermanentBurn(x, y, intensity) {
                 const size = Math.min(70, 25 + Math.floor(intensity / 2));
-                
-                // Draw organic burn shape on canvas
+                // Store burn data
+                burnHistory.push({ x: x, y: y, size: size });
+                saveBurnHistory();
+                // Draw immediately
                 drawOrganicBurn(x, y, size);
-                
-                // Create ember particles
+                // visual fx (embers & smoke)
                 const emberCount = 6 + Math.floor(size / 6);
                 for (let i = 0; i < emberCount; i++) {
                     const ember = document.createElement('div');
@@ -663,8 +557,6 @@
                     wrapper.appendChild(ember);
                     setTimeout(() => ember.remove(), 1000);
                 }
-                
-                // Create smoke
                 for (let i = 0; i < 4; i++) {
                     const smoke = document.createElement('div');
                     smoke.className = 'smoke';
@@ -678,13 +570,28 @@
                 }
             }
             
-            // Initialize z-index and store initial rotation for all Polaroids
+            resizeCanvas();
+            window.addEventListener('resize', function() {
+                resizeCanvas();
+                redrawAllBurns();
+            });
+            
+            // Track drag speed for burning effect on PAPER
+            let isDraggingOnPaper = false;
+            let lastPaperX = 0;
+            let lastPaperY = 0;
+            let lastPaperTime = 0;
+            let paperDragSpeeds = [];
+            let accumulatedBurnIntensity = 0;
+            let currentBurnX = 0;
+            let currentBurnY = 0;
+            
+            // Initialize z-index and store initial rotation for all Polaroids (for polaroids part)
             polaroidIds.forEach((id, index) => {
                 const polaroid = document.getElementById(id);
                 if (polaroid) {
                     polaroid.style.position = 'absolute';
                     polaroid.style.zIndex = zIndexCounter + index;
-                    
                     const style = window.getComputedStyle(polaroid);
                     const transform = style.transform || 'none';
                     const rotateMatch = transform.match(/rotate\((-?\d+\.?\d*)deg\)/);
@@ -706,7 +613,6 @@
                 if (polaroid) {
                     const rotation = getRandomRotation();
                     const offset = getRandomOffset();
-        
                     polaroid.style.position = 'absolute';
                     polaroid.style.bottom = `${offset}px`;
                     polaroid.style.left = '30px';
@@ -716,9 +622,8 @@
                 }
             });
             
-            // BURN EFFECT ON PAPER - Mouse events on content-wrapper
+            // BURN EFFECT ON PAPER - with localStorage
             wrapper.addEventListener('mousedown', function(e) {
-                // Only trigger if not clicking on a polaroid
                 if (!e.target.closest('.polaroid')) {
                     isDraggingOnPaper = true;
                     lastPaperX = e.clientX;
@@ -726,13 +631,9 @@
                     lastPaperTime = Date.now();
                     paperDragSpeeds = [];
                     accumulatedBurnIntensity = 0;
-                    
-                    // Get starting position
                     const wrapperRect = wrapper.getBoundingClientRect();
                     currentBurnX = e.clientX - wrapperRect.left;
                     currentBurnY = e.clientY - wrapperRect.top;
-                    
-                    // Change cursor on paper when dragging
                     wrapper.style.cursor = 'grabbing';
                 }
             });
@@ -743,8 +644,6 @@
                     const currentY = e.clientY;
                     const currentTime = Date.now();
                     const deltaTime = currentTime - lastPaperTime;
-                    
-                    // Get position relative to content-wrapper
                     const wrapperRect = wrapper.getBoundingClientRect();
                     const burnX = currentX - wrapperRect.left;
                     const burnY = currentY - wrapperRect.top;
@@ -757,14 +656,10 @@
                         
                         paperDragSpeeds.push(speed);
                         if (paperDragSpeeds.length > 5) paperDragSpeeds.shift();
-                        
                         const avgSpeed = paperDragSpeeds.reduce((a, b) => a + b, 0) / paperDragSpeeds.length;
                         
-                        // Build up burn intensity with back-and-forth motion
                         if (avgSpeed > 0.35) {
                             accumulatedBurnIntensity += avgSpeed * 1.5;
-                            
-                            // Add small visual feedback while rubbing
                             if (avgSpeed > 0.5 && Math.random() < 0.4) {
                                 const spark = document.createElement('div');
                                 spark.className = 'spark';
@@ -777,20 +672,14 @@
                             }
                         }
                         
-                        // When enough intensity builds up, create a burn hole!
                         if (accumulatedBurnIntensity >= 12 && burnX >= 0 && burnX <= wrapperRect.width && burnY >= 0 && burnY <= wrapperRect.height) {
-                            // Create organic burn hole
-                            createBurnHole(burnX, burnY, accumulatedBurnIntensity);
-                            
-                            // Reset intensity for that spot
+                            // permanent burn with storage!
+                            addPermanentBurn(burnX, burnY, accumulatedBurnIntensity);
                             accumulatedBurnIntensity = 0;
-                            
-                            // Small screen shake effect
                             wrapper.style.transform = 'translateX(1px)';
                             setTimeout(() => { wrapper.style.transform = ''; }, 50);
                         }
                     }
-                    
                     lastPaperX = currentX;
                     lastPaperY = currentY;
                     lastPaperTime = currentTime;
@@ -807,7 +696,81 @@
                     accumulatedBurnIntensity = 0;
                 }
             });
-        
+            
+            // Touch support for mobile (same persistence)
+            wrapper.addEventListener('touchstart', function(e) {
+                if (!e.target.closest('.polaroid')) {
+                    e.preventDefault();
+                    isDraggingOnPaper = true;
+                    const touch = e.touches[0];
+                    lastPaperX = touch.clientX;
+                    lastPaperY = touch.clientY;
+                    lastPaperTime = Date.now();
+                    paperDragSpeeds = [];
+                    accumulatedBurnIntensity = 0;
+                    const wrapperRect = wrapper.getBoundingClientRect();
+                    currentBurnX = touch.clientX - wrapperRect.left;
+                    currentBurnY = touch.clientY - wrapperRect.top;
+                    wrapper.style.cursor = 'grabbing';
+                }
+            });
+            
+            wrapper.addEventListener('touchmove', function(e) {
+                if (isDraggingOnPaper) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const currentX = touch.clientX;
+                    const currentY = touch.clientY;
+                    const currentTime = Date.now();
+                    const deltaTime = currentTime - lastPaperTime;
+                    const wrapperRect = wrapper.getBoundingClientRect();
+                    const burnX = currentX - wrapperRect.left;
+                    const burnY = currentY - wrapperRect.top;
+                    
+                    if (deltaTime > 0 && lastPaperX !== 0) {
+                        const deltaX = Math.abs(currentX - lastPaperX);
+                        const deltaY = Math.abs(currentY - lastPaperY);
+                        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                        const speed = distance / deltaTime;
+                        paperDragSpeeds.push(speed);
+                        if (paperDragSpeeds.length > 5) paperDragSpeeds.shift();
+                        const avgSpeed = paperDragSpeeds.reduce((a, b) => a + b, 0) / paperDragSpeeds.length;
+                        if (avgSpeed > 0.35) {
+                            accumulatedBurnIntensity += avgSpeed * 1.5;
+                            if (avgSpeed > 0.5 && Math.random() < 0.4) {
+                                const spark = document.createElement('div');
+                                spark.className = 'spark';
+                                spark.style.left = (burnX - 2) + 'px';
+                                spark.style.top = (burnY - 2) + 'px';
+                                spark.style.width = '3px';
+                                spark.style.height = '3px';
+                                wrapper.appendChild(spark);
+                                setTimeout(() => spark.remove(), 200);
+                            }
+                        }
+                        if (accumulatedBurnIntensity >= 12 && burnX >= 0 && burnX <= wrapperRect.width && burnY >= 0 && burnY <= wrapperRect.height) {
+                            addPermanentBurn(burnX, burnY, accumulatedBurnIntensity);
+                            accumulatedBurnIntensity = 0;
+                            wrapper.style.transform = 'translateX(1px)';
+                            setTimeout(() => { wrapper.style.transform = ''; }, 50);
+                        }
+                    }
+                    lastPaperX = currentX;
+                    lastPaperY = currentY;
+                    lastPaperTime = currentTime;
+                }
+            });
+            
+            window.addEventListener('touchend', function() {
+                if (isDraggingOnPaper) {
+                    isDraggingOnPaper = false;
+                    wrapper.style.cursor = 'default';
+                    paperDragSpeeds = [];
+                    accumulatedBurnIntensity = 0;
+                }
+            });
+            
+            // ---- INTERACT POLAROID (exactly same as original) ----
             interact('.polaroid')
                 .draggable({
                     inertia: true,
@@ -820,7 +783,6 @@
                     listeners: {
                         start(event) {
                             event.target.classList.add('dragging');
-                            
                             const draggedPolaroid = event.target;
                             draggedPolaroid.style.zIndex = Math.max(...polaroidIds.map(id => {
                                 const polaroid = document.getElementById(id);
@@ -832,26 +794,21 @@
                             const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
                             const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
                             const rotation = parseFloat(target.getAttribute('data-rotation')) || 0;
-        
                             target.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
-        
                             target.setAttribute('data-x', x);
                             target.setAttribute('data-y', y);
                         },
                         end(event) {
                             event.target.classList.remove('dragging');
-                            
                             const target = event.target;
                             const rect = target.getBoundingClientRect();
                             const contentWrapperRect = document.getElementById('content-wrapper').getBoundingClientRect();
-                            
                             const isInBottomLeftCorner = (
                                 rect.right > contentWrapperRect.left &&
                                 rect.bottom > contentWrapperRect.top &&
                                 rect.left < contentWrapperRect.left + 100 &&
                                 rect.top < contentWrapperRect.top + 100
                             );
-                            
                             if (isInBottomLeftCorner) {
                                 const randomRotation = getRandomRotation();
                                 target.style.transform += ` rotate(${randomRotation}deg)`;
@@ -861,12 +818,12 @@
                     }
                 });
         
+            // pageflip logic (unchanged)
             const pageflip = document.getElementById('pageflip');
             const contentWrapper = document.getElementById('content-wrapper');
         
             function hidePageflip() {
                 pageflip.classList.add('pageflipclose-animate');
-                
                 pageflip.addEventListener('animationend', function() {
                     pageflip.classList.remove('pageflipclose-animate', 'show');
                 }, { once: true });
@@ -878,10 +835,8 @@
                     event.clientX >= rect.right - 80 &&
                     event.clientY >= rect.bottom - 80
                 );
-        
                 if (isClickInBottomRight) {
                     pageflip.classList.add('show', 'pageflip-animate');
-        
                     pageflip.addEventListener('animationend', function() {
                         pageflip.classList.remove('pageflip-animate');
                     }, { once: true });
@@ -895,9 +850,10 @@
                     hidePageflip();
                 }
             });
+            
+            // FINAL STEP: Load existing burns from localStorage and redraw canvas
+            loadBurnHistoryAndRedraw();
         });
-        </script>
-
-        
+    </script>
 </body>
 </html>
