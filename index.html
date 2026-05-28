@@ -48,9 +48,6 @@
             text-align: center;
             color: #575757;
         }
-       .polaroid:active {
-    cursor: grabbing;
-}
 
         #content {
             font-family: 'Indie Flower', cursive;
@@ -76,6 +73,15 @@
             font-size: 0.9rem;
             color: #333;
             z-index: 10;
+            cursor: grab !important; /* Shows hand cursor on hover - NO plus sign */
+        }
+
+        .polaroid:active {
+            cursor: grabbing !important; /* Shows grabbing hand while dragging */
+        }
+
+        .polaroid.dragging {
+            cursor: grabbing !important; /* Maintains grabbing during drag */
         }
 
         .polaroid img {
@@ -364,6 +370,9 @@
                     ],
                     listeners: {
                         start(event) {
+                            // ADDED: Add dragging class for cursor
+                            event.target.classList.add('dragging');
+                            
                             // Set the z-index of the dragged Polaroid to the highest value
                             const draggedPolaroid = event.target;
                             draggedPolaroid.style.zIndex = Math.max(...polaroidIds.map(id => {
@@ -383,6 +392,9 @@
                             target.setAttribute('data-y', y);
                         },
                         end(event) {
+                            // ADDED: Remove dragging class to revert cursor
+                            event.target.classList.remove('dragging');
+                            
                             const target = event.target;
                             const rect = target.getBoundingClientRect();
                             const contentWrapperRect = document.getElementById('content-wrapper').getBoundingClientRect();
@@ -445,9 +457,3 @@
         
 </body>
 </html>
-
-
-
-
-
-
